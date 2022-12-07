@@ -1,6 +1,6 @@
 package com.sashkou.authentication.filter;
 
-import com.sashkou.authentication.service.Service;
+import com.sashkou.authentication.service.BasicAuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -15,7 +15,7 @@ import java.io.IOException;
 @Component
 @RequiredArgsConstructor
 public class BasicAuthFilter implements Filter {
-    private final Service service;
+    private final BasicAuthService basicAuthService;
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
@@ -28,7 +28,7 @@ public class BasicAuthFilter implements Filter {
             return;
         }
 
-        boolean authenticated = service.doBasicAuth(authorizationHeader);
+        boolean authenticated = basicAuthService.auth(authorizationHeader);
         if (!authenticated) {
             unauthorized(httpServletResponse);
             return;

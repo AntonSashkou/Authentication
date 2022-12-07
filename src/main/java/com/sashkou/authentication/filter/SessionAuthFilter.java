@@ -1,6 +1,7 @@
 package com.sashkou.authentication.filter;
 
-import com.sashkou.authentication.service.Service;
+import com.sashkou.authentication.service.BasicAuthService;
+import com.sashkou.authentication.service.SessionAuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -18,7 +19,8 @@ public class SessionAuthFilter implements Filter {
     private static final String BASIC_AUTH_MARKER = "Basic";
     private static final String SESSION_AUTH_MARKER = "Session";
 
-    private final Service service;
+    private final BasicAuthService basicAuthService;
+    private final SessionAuthService sessionAuthService;
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
@@ -27,11 +29,11 @@ public class SessionAuthFilter implements Filter {
         String authorizationHeader = httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION);
 
         if (authorizationHeader.contains(BASIC_AUTH_MARKER)) {
-            boolean isBasicAuthSucceed = service.doBasicAuth(authorizationHeader);
+            boolean isBasicAuthSucceed = basicAuthService.auth(authorizationHeader);
             if (!isBasicAuthSucceed) {
                 unauthorized(httpServletResponse);
             } else {
-                String sessionId = service.createSession(authorizationHeader);
+                String sessionId = sessionAuthService.createSession(authorizationHeader);
                 respondWithSessionId(httpServletResponse, sessionId);
             }
 
@@ -39,7 +41,7 @@ public class SessionAuthFilter implements Filter {
         }
 
         if (authorizationHeader.contains(SESSION_AUTH_MARKER)) {
-            boolean isSessionAuthSucceed = service.validateSession(authorizationHeader);
+            boolean isSessionAuthSucceed = sessionAuthService.validateSession(authorizationHeader);
             if (!isSessionAuthSucceed) {
                 unauthorized(httpServletResponse);
             } else {
