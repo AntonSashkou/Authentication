@@ -12,7 +12,7 @@ public class Controller {
 
     @GetMapping
     public String getSecret() {
-        return UUID.randomUUID().toString();
+        return "Secret protected by authentication: " + UUID.randomUUID();
     }
 
 }

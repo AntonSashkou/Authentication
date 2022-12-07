@@ -14,8 +14,7 @@ import java.io.IOException;
 
 @Component
 @RequiredArgsConstructor
-public class Filter implements javax.servlet.Filter {
-
+public class BasicAuthFilter implements Filter {
     private final Service service;
 
     @Override
@@ -29,7 +28,7 @@ public class Filter implements javax.servlet.Filter {
             return;
         }
 
-        boolean authenticated = service.handleAuth(authorizationHeader);
+        boolean authenticated = service.doBasicAuth(authorizationHeader);
         if (!authenticated) {
             unauthorized(httpServletResponse);
             return;
