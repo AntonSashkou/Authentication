@@ -15,7 +15,7 @@ import java.io.IOException;
 @Component
 @RequiredArgsConstructor
 public class SessionAuthFilter implements Filter {
-
+    private static final String FILTER_PATH = "/secret/session-auth";
     private static final String BASIC_AUTH_MARKER = "Basic";
     private static final String SESSION_AUTH_MARKER = "Session";
 
@@ -24,6 +24,10 @@ public class SessionAuthFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+        if (!shouldFilter((HttpServletRequest) servletRequest)) {
+            filterChain.doFilter(servletRequest, servletResponse);
+        }
+
         HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
         HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
         String authorizationHeader = httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION);
@@ -59,4 +63,7 @@ public class SessionAuthFilter implements Filter {
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
     }
 
+    private boolean shouldFilter(HttpServletRequest request) {
+        return request.getRequestURI().contains(FILTER_PATH);
+    }
 }

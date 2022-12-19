@@ -10,9 +10,19 @@ import java.util.UUID;
 @RequestMapping("/secret")
 public class Controller {
 
-    @GetMapping
-    public String getSecret() {
-        return "Secret protected by authentication: " + UUID.randomUUID();
+    @GetMapping("/basic-auth")
+    public String getBasicAuthSecret() {
+        return "Secret protected by basic authentication: " + UUID.randomUUID();
+    }
+
+    @GetMapping("/session-auth")
+    public String getSessionAuthSecret() {
+        return "Secret protected by session authentication: " + UUID.randomUUID();
+    }
+
+    @GetMapping("/jwt-auth")
+    public String getJwtAuthSecret() {
+        return "Secret protected by jwt authentication: " + UUID.randomUUID();
     }
 
 }
